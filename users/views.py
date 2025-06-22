@@ -14,7 +14,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 import json
 from django.http import JsonResponse, HttpResponse
-from validate_email import validate_email
+# from validate_email import validate_email
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from .models import *
