@@ -17,7 +17,7 @@ class InstructorSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'email', 'first_name', 'last_name', 'role', 'username')
 
 class CourseSerializer(serializers.ModelSerializer):
-    instructor = InstructorSerializer()
+    instructor = InstructorSerializer(required=False)
     topics = TopicSerializer(source="topic", read_only=True, many=True)
     topic = serializers.SlugRelatedField(slug_field="slug", many=True, write_only=True, queryset=Topic.objects.all())
     class Meta:
