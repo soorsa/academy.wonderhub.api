@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-)mh%y-68@s^^q&9=x&!hizbma%2ys6fzta%cbvk1a+dl8p272='
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["api.wonderhub.com.ng"]
 
