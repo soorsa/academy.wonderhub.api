@@ -89,12 +89,27 @@ WSGI_APPLICATION = 'wonderhub.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': os.environ.get('DB_NAME', 'altisbik_wonderhub_db'),
+            'USER': os.environ.get('DB_USER', 'altisbik_admin'),
+            'PASSWORD': os.environ.get('DB_PASSWORD', '}vgA1PhTh}q4W%#O'),
+            'HOST': 'localhost',
+            'PORT': '3306',
+            'OPTIONS': {
+                'charset': 'utf8mb4',
+            },
+        }
+    }
 
 
 # Password validation
