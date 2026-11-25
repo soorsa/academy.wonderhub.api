@@ -1,21 +1,13 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 from django.conf import settings
-import os
-import email
-from email.policy import default
 from django.core.exceptions import ValidationError
-from django.core.validators import MaxValueValidator,MinValueValidator
-from django.db.models import Sum
-from django.db.models.signals import pre_save, post_save
-from django.shortcuts import reverse
-from django.utils import timezone
-from datetime import timedelta
-from django.utils.text import slugify
-from PIL import Image
-from random import randint
-import uuid
 
+ROLE_CHOICES = (
+    ('admin', 'Admin'),
+    ('instructor', 'Instructor'),
+    ('student', 'Student'),
+)
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         """Create and return a regular user with an email and password."""
@@ -31,6 +23,7 @@ class CustomUserManager(BaseUserManager):
         """Create and return a superuser with email and password."""
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('role', "admin")
 
         if extra_fields.get('is_staff') is not True:
             raise ValueError("Superuser must have is_staff=True.")
@@ -39,29 +32,30 @@ class CustomUserManager(BaseUserManager):
 
         return self.create_user(email, password, **extra_fields)
 
-class CustomUser(AbstractUser):
+class User(AbstractUser):
     username = None  # Remove username field
     email = models.EmailField(unique=True)  # Use email as the primary field
-    ROLE_CHOICES = (
-        ('admin', 'Admin'),
-        ('instructor', 'Instructor'),
-        ('student', 'Student'),
-    )
     role = models.CharField(max_length=15, choices=ROLE_CHOICES, default='student')
+    job_title = models.CharField(max_length=30, default='', blank=True, null=True)
+    phone_number = models.CharField(max_length=15, blank=True, null=True)
+    profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
+    bio = models.TextField(max_length=500, blank=True)
+    date_of_birth = models.DateField(blank=True, null=True)
+
 
     USERNAME_FIELD = 'email'  # Use email for authentication
     REQUIRED_FIELDS = ['first_name', 'last_name']  # Fields required when creating superuser
     objects = CustomUserManager()
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name}"
+        return f"{self.email}"
 
 
 
 
 
 class BankAccount(models.Model):
-    instructor = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='bank_accounts')
+    instructor = models.OneToOneField(User, on_delete=models.CASCADE, related_name='bank_accounts')
     bank = models.CharField(max_length=50, blank=True, null=True)
     account_number = models.CharField(max_length=50, blank=True, null=True)
     
@@ -87,7 +81,7 @@ class Withdrawal(models.Model):
         ('success', 'Success'),
         ('failed', 'Failed'),
     )
-    instructor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    instructor = models.ForeignKey(User, on_delete=models.CASCADE)
     amount = models.PositiveIntegerField(blank=True, null=True)
     status = models.CharField( max_length=50, choices=STATUS)
     date = models.DateTimeField(auto_now=True)

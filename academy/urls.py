@@ -14,15 +14,18 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path, include
-from django.conf import settings
-from django.conf.urls.static import static
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from rest_framework.routers import DefaultRouter
 from . import views
 
+router = DefaultRouter()
+router.register(r'courses', views.CourseApiSet, basename='courses')
+router.register(r'categories', views.CategoryApiSet, basename='categories')
+router.register(r'topics', views.TopicApiSet, basename='topics')
+router.register(r'lessons', views.LessonApiSet, basename='lessons')
+router.register(r'modules', views.ModuleApiSet, basename='modules')
+router.register(r'transactions', views.TransactionViewSet, basename='transactions')
+router.register(r'enrollments', views.EnrollmentViewSet, basename='enrollments')
 
 urlpatterns = [
-
-    # AUTH VIEWS
-    path('', views.home, name='home'),
-    path('api/courses', views.getCourses, name='get_courses'),
+    path('', include(router.urls)),
 ]

@@ -1,0 +1,121 @@
+on: push
+name: 🚀 Deploy Richtech API
+jobs:
+  web-deploy:
+    name: 🎉 Deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v6
+
+      - name: 📂 Sync CORE files
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./core/
+          server-dir: /core/ # change this to your target folder
+          protocol: ftps
+          port: 21
+          security: loose
+          timeout: 3000000 # 2 minutes (in milliseconds)
+          log-level: verbose
+          timeout_minutes: 30
+          max_attempts: 3
+          retry_wait_seconds: 10
+          passive: true
+          concurrency: 1 # Lower concurrency to reduce timeout risk
+
+          # exclude: |
+          #   **/.git*
+          #   **/.git*/**
+          #   **/.github/**
+          #   **/.env
+          #   **/.venv
+          #   **/.venv/**
+          #   **/static
+          #   **/static/**
+          #   **/README.md
+          #   **/authentication
+          #   **/authentication/**
+          #   **/shop
+          #   **/shop/**
+
+      - name: 📂 Sync SHOP files
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./shop/
+          server-dir: /shop/ # change this to your target folder
+          protocol: ftps
+          port: 21
+          security: loose
+          timeout: 3000000 # 2 minutes (in milliseconds)
+          log-level: verbose
+          timeout_minutes: 30
+          max_attempts: 3
+          retry_wait_seconds: 10
+          passive: true
+          concurrency: 1 # Lower concurrency to reduce timeout risk
+          exclude: |
+            **/.__pycache__*
+            **/.__pycache__*/**
+            **/.migrations*
+            **/.migrations/**
+
+      - name: 📂 Sync AUTH files
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./authentication/
+          server-dir: /authentication/ # change this to your target folder
+          protocol: ftps
+          port: 21
+          security: loose
+          timeout: 3000000 # 2 minutes (in milliseconds)
+          log-level: verbose
+          timeout_minutes: 30
+          max_attempts: 3
+          retry_wait_seconds: 10
+          passive: true
+          concurrency: 1 # Lower concurrency to reduce timeout risk
+
+      - name: 📂 Sync OTHER files
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: / # change this to your target folder
+          protocol: ftps
+          port: 21
+          security: loose
+          timeout: 3000000 # 2 minutes (in milliseconds)
+          log-level: verbose
+          timeout_minutes: 30
+          max_attempts: 3
+          retry_wait_seconds: 10
+          passive: true
+          concurrency: 1 # Lower concurrency to reduce timeout risk
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/.github*
+            **/.github*/**
+            **/.venv*
+            **/.venv*/**
+            **/core*
+            **/core*/**
+            **/shop*
+            **/shop*/**
+            **/authentication*
+            **/authentication*/**
+            **/static*
+            **/static*/**
+            **/db.sqlite3*
