@@ -5,6 +5,7 @@ from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.utils.text import slugify
 from users.models import User
+import uuid
 
 LEVEL_CHOICES = (
     ("beginner", "Beginner"),
@@ -91,7 +92,6 @@ class Course(models.Model):
     def __str__(self):
         return self.title
 
-
 class Module(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="modules")
     title = models.CharField(max_length=255)
@@ -115,21 +115,16 @@ class Module(models.Model):
     def __str__(self):
         return f"{self.course.title} - {self.title}"
 
-
 class Lesson(models.Model):
-
     module = models.ForeignKey(Module, on_delete=models.CASCADE, related_name="lessons")
     title = models.CharField(max_length=255)
     slug = models.SlugField(unique=True, blank=True)
     order = models.PositiveIntegerField(default=0)  # Helps order lessons
     duration = models.DurationField(default=timedelta(0))  # Duration of the lesson
     is_preview = models.BooleanField(default=False)  # Free preview lesson
-
-    # Content fields
     video_url = models.URLField(blank=True, null=True)
     pdf_file = models.FileField(upload_to="lesson_pdfs/", blank=True, null=True)
     text_content = models.TextField(blank=True, null=True)
-
     class Meta:
         ordering = ["order"]
 
@@ -141,12 +136,6 @@ class Lesson(models.Model):
     def __str__(self):
         return f"{self.module.course.title} - {self.module.title} - {self.title}"
     
-
-import uuid
-from django.conf import settings
-from django.db import models
-
-
 class Transaction(models.Model):
     class TransactionType(models.TextChoices):
         DEPOSIT = "DEPOSIT", "Deposit"

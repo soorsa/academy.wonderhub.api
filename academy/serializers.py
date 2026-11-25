@@ -19,7 +19,16 @@ class InstructorSerializer(serializers.ModelSerializer):
 class CourseSerializer(serializers.ModelSerializer):
     instructor = InstructorSerializer(required=False)
     topics = TopicSerializer(source="topic", read_only=True, many=True)
-    topic = serializers.SlugRelatedField(slug_field="slug", many=True, write_only=True, queryset=Topic.objects.all())
+    topic_slugs = serializers.SlugRelatedField(slug_field="slug", many=True, write_only=True, queryset=Topic.objects.all(), required=True)
+    benefits = serializers.ListField(
+        child=serializers.CharField(),
+        required=False
+    )
+
+    suitable_for = serializers.ListField(
+        child=serializers.CharField(),
+        required=False
+    )
     class Meta:
         model = Course
         fields ="__all__"
