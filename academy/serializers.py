@@ -18,11 +18,11 @@ class InstructorSerializer(serializers.ModelSerializer):
 
 class CourseSerializer(serializers.ModelSerializer):
     instructor = InstructorSerializer(required=False)
-    topics = TopicSerializer(source="topic", read_only=True, many=True)
-    topic_slugs = serializers.SlugRelatedField(slug_field="slug", many=True, write_only=True, queryset=Topic.objects.all(), required=True)
+    topic = TopicSerializer(source="topic", read_only=True, many=True)
+    topic_slugs = serializers.SlugRelatedField(slug_field="slug", many=True, write_only=True, queryset=Topic.objects.all())
     class Meta:
         model = Course
-        fields ="__all__"
+        fields = "__all__"
 class ModuleSerializer(serializers.ModelSerializer):
     course = serializers.SlugRelatedField(slug_field="slug", queryset=Course.objects.all())
     class Meta:
