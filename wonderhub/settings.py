@@ -24,7 +24,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-)mh%y-68@s^^q&9=x&!hizbma%2ys6fzta%cbvk1a+dl8p272='
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
+ENVIROMENT = "PROD"
 
 ALLOWED_HOSTS = ["api.wonderhub.com.ng"]
 
@@ -90,14 +91,7 @@ WSGI_APPLICATION = 'wonderhub.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-if DEBUG:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
-else:
+if ENVIROMENT == "PROD":
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
@@ -109,6 +103,13 @@ else:
             'OPTIONS': {
                 'charset': 'utf8mb4',
             },
+        }
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
 
