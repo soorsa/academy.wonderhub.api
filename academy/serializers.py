@@ -38,7 +38,7 @@ class CourseSerializer(serializers.ModelSerializer):
             'suitable_for',
             'price',
             'undiscounted_price',
-            'sales_type',
+            'sale_type',
             'sale_header',
             'sale_message',
             'is_published',
