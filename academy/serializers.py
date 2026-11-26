@@ -18,7 +18,7 @@ class InstructorSerializer(serializers.ModelSerializer):
 
 class CourseSerializer(serializers.ModelSerializer):
     instructor = InstructorSerializer(required=False)
-    topic = TopicSerializer(source="topic", read_only=True, many=True)
+    topic = TopicSerializer(read_only=True, many=True)
     topic_slugs = serializers.SlugRelatedField(slug_field="slug", many=True, write_only=True, queryset=Topic.objects.all())
     class Meta:
         model = Course
