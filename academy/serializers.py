@@ -44,6 +44,7 @@ class CourseSerializer(serializers.ModelSerializer):
             'slug',
             'title',
             'thumbnail',
+            'preview_video',
             'description',
             'level',
             'benefits',
