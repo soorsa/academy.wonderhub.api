@@ -93,26 +93,7 @@ class Course(models.Model):
     def number_of_students(self):
         """Return count of active student enrollments for the course."""
         # Uses prefetched cache if available; otherwise queries active enrollments
-        active_enrollments = [
-            e for e in self.enrollments.all()
-            if e.is_active
-        ]
-
-        seen = set()
-        unique_count = 0
-        for enrollment in active_enrollments:
-            if enrollment.student.id is not None:
-                key = ("user", enrollment.student.id)
-            elif enrollment.email:
-                key = ("email", enrollment.email.strip().lower())
-            else:
-                key = ("enrollment", enrollment.pk)
-
-            if key not in seen:
-                seen.add(key)
-                unique_count += 1
-
-        return unique_count
+        return self.enrollments.all().count()
     
     def __str__(self):
         return self.title
