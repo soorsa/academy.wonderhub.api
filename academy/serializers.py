@@ -12,15 +12,27 @@ class TopicSerializer(serializers.ModelSerializer):
 
 class InstructorSerializer(serializers.ModelSerializer):
     number_of_courses = serializers.SerializerMethodField(read_only=True)
+    number_of_students = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = User
-        fields = ('id', 'email', 'first_name', 'last_name', 'role', 'job_title', 'bio', 'username', 'number_of_courses')
-        read_only_fields = ('id', 'email', 'first_name', 'last_name', 'role', 'username', 'number_of_courses')
+        fields = ('id', 'email', 'first_name', 'last_name', 'role', 'job_title', 'bio', 'username', 'number_of_courses','number_of_students')
+        read_only_fields = ('id', 'email', 'first_name', 'last_name', 'role', 'username', 'number_of_courses','number_of_students')
 
     def get_number_of_courses(self, obj):
         if hasattr(obj, 'number_of_courses'):
             return obj.number_of_courses
         return obj.courses.count()
+    
+    def get_number_of_students(self, obj):
+        if hasattr(obj, 'number_of_students'):
+            return obj.number_of_students
+        # Counts active enrollments across all courses taught by this instructor
+        # Note: if the same student enrolls in 2 courses by this instructor,
+        # this counts 2 enrollments (total enrollments across courses).
+        return Enrollment.objects.filter(
+            course__instructor=obj,
+            is_active=True,
+        ).count()
 
 class CourseSerializer(serializers.ModelSerializer):
     instructor = InstructorSerializer(required=False)
