@@ -28,7 +28,7 @@ class CourseSerializer(serializers.ModelSerializer):
     topic_slugs = serializers.SlugRelatedField(slug_field="slug", many=True, write_only=True, queryset=Topic.objects.all())
     class Meta:
         model = Course
-        fields = (
+        fields = [
             'slug',
             'title',
             'thumbnail',
@@ -47,8 +47,17 @@ class CourseSerializer(serializers.ModelSerializer):
             'topic',
             'instructor',
             'number_of_students',
+            'total_lectures',
             'topic_slugs'
-        )
+        ]
+        read_only_fields = [
+            "id",
+            "slug",
+            "total_duration",
+            "total_lectures",
+            "number_of_students",
+            "created_at",
+        ]
 class ModuleSerializer(serializers.ModelSerializer):
     course = serializers.SlugRelatedField(slug_field="slug", queryset=Course.objects.all())
     class Meta:
