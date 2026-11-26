@@ -11,10 +11,16 @@ class TopicSerializer(serializers.ModelSerializer):
         fields =["id","category","name","slug","description","total_courses"]
 
 class InstructorSerializer(serializers.ModelSerializer):
+    number_of_courses = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = User
-        fields = ('id', 'email', 'first_name', 'last_name', 'role', 'job_title', 'bio', 'username')
-        read_only_fields = ('id', 'email', 'first_name', 'last_name', 'role', 'username')
+        fields = ('id', 'email', 'first_name', 'last_name', 'role', 'job_title', 'bio', 'username', 'number_of_courses')
+        read_only_fields = ('id', 'email', 'first_name', 'last_name', 'role', 'username', 'number_of_courses')
+
+    def get_number_of_courses(self, obj):
+        if hasattr(obj, 'number_of_courses'):
+            return obj.number_of_courses
+        return obj.courses.count()
 
 class CourseSerializer(serializers.ModelSerializer):
     instructor = InstructorSerializer(required=False)
