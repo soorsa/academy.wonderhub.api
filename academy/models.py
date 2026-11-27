@@ -85,9 +85,7 @@ class Course(models.Model):
 
     @property
     def total_lectures(self):
-        """Recalculate total lectures and duration for the course"""
-        total = self.modules.lessons.all().count()
-        return total
+        return Lesson.objects.filter(module__course=self).count()
     
     @property
     def number_of_students(self):
